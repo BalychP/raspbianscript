@@ -225,11 +225,11 @@ echo "Processing: 5.3.1 Ensure password creation requirements are configured"
 
   apt-get install -y libpam-pwquality
 
-  if grep -q “minlen = 14” /etc/security/pwquality.conf && grep -q “dcredit = -1” /etc/security/pwquality.conf && grep -q “ucredit = -1” /etc/security/pwquality.conf && grep -q “ocredit = -1” /etc/security/pwquality.conf && grep -q “lcredit = -1” /etc/security/pwquality.conf
+  if grep -q “minlen = 8” /etc/security/pwquality.conf && grep -q “dcredit = -1” /etc/security/pwquality.conf && grep -q “ucredit = -1” /etc/security/pwquality.conf && grep -q “ocredit = -1” /etc/security/pwquality.conf && grep -q “lcredit = -1” /etc/security/pwquality.conf
     then
         echo "Values are set!"
     else
-        echo -e 'minlen = 14\ndcredit = -1\nucredit = -1\nocredit = -1\nlcredit = -1' >> /etc/security/pwquality.conf
+        echo -e 'minlen = 8\ndcredit = -1\nucredit = -1\nocredit = -1\nlcredit = -1' >> /etc/security/pwquality.conf
   fi
 
 
