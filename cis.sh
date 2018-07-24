@@ -26,13 +26,6 @@ echo "Processing: 1.3.2 Ensure filesystem integrity is regularly checked"
         rm mycron
   fi
 
-#  echo "Processing: 1.6.1.4 Ensure no unconfined daemons exist"
-
-
-
-#  echo "Processing: 1.6.1.2 Ensure the SELinux state is enforcing"
-
-
 echo "Processing: 2.1.1 Ensure chargen services are not enabled"
 
   sed -i "/\b\( ^chargen\)\b/d" /etc/services
