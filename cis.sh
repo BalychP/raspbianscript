@@ -101,7 +101,7 @@ echo "Processing: 3.6.2-3.6.4 applying firewall policy"
   iptables -A OUTPUT -p udp -m state --state NEW,ESTABLISHED -j ACCEPT
   iptables -A OUTPUT -p icmp -m state --state NEW,ESTABLISHED -j ACCEPT
   #if You want to open input access just add string under example below 
-  #iptables -A INPUT -s <network/mask> --dport <app_port> -p tcp -m state --state NEW,ESTABLISHED -j ACCEPT
+  #iptables -A INPUT -p tcp -s <network/mask> --dport <app_port> -m state --state NEW,ESTABLISHED -j ACCEPT
   iptables -A INPUT -p tcp -m state --state ESTABLISHED -j ACCEPT
   iptables -A INPUT -p udp -m state --state ESTABLISHED -j ACCEPT
   iptables -A INPUT -p icmp -m state --state ESTABLISHED -j ACCEPT
