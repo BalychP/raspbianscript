@@ -26,6 +26,13 @@ echo "Processing: 1.3.2 Ensure filesystem integrity is regularly checked"
         rm mycron
   fi
 
+#  echo "Processing: 1.6.1.4 Ensure no unconfined daemons exist"
+
+
+
+#  echo "Processing: 1.6.1.2 Ensure the SELinux state is enforcing"
+
+
 echo "Processing: 2.1.1 Ensure chargen services are not enabled"
 
   sed -i "/\b\( ^chargen\)\b/d" /etc/services
@@ -235,33 +242,26 @@ echo "Processing: 5.3.1 Ensure password creation requirements are configured"
 
 echo "Processing: 5.3.2 Ensure lockout for failed password attempts is configured"
 
-  sed -i "/\b\( required \)\b/d" /etc/pam.d/common-auth
-  echo auth required pam_tally2.so onerr=fail audit silent deny=5 unlock_time=900 >> /etc/pam.d/common-auth
+  sed -i "/\b\(required\)\b/d" /etc/pam.d/common-auth
+  echo auth required pam_tally2.so onerr=fail audit silent deny=10 unlock_time=90 >> /etc/pam.d/common-auth
 
 echo "Processing: 5.3.3 Ensure password reuse is limited"
 
-  sed -i "/\b\( required \)\b/d" /etc/pam.d/common-password
+  sed -i "/\b\(required\)\b/d" /etc/pam.d/common-password
   echo password required pam_pwhistory.so remember=5 >> /etc/pam.d/common-password
 
 echo "Processing: 5.3.4 Ensure password hashing algorithm is SHA-512"
 
-  sed -i "/\b\( success= \)\b/d" /etc/pam.d/common-password
+  sed -i "/\b\(success=\)\b/d" /etc/pam.d/common-password
   echo password [success=1 default=ignore] pam_unix.so sha512 >> /etc/pam.d/common-password
 
 echo "Processing: 5.4.1.1 Ensure password expiration is 365 days or less"
-
-  sed -i "/\b\( PASS_MAX_DAYS \)\b/d" /etc/login.defs
-  echo PASS_MAX_DAYS 90 >> /etc/pam.d/common-password
-
 echo "Processing: 5.4.1.2 Ensure minimum days between password changes is 7 or more"
-
-  sed -i "/\b\( PASS_MIN_DAYS \)\b/d" /etc/login.defs
-  echo PASS_MIN_DAYS 7 >> /etc/pam.d/common-password
-
 echo "Processing: 5.4.1.3 Ensure password expiration warning days is 7 or more"
 
-  sed -i "/\b\( PASS_WARN_AGE\)\b/d" /etc/login.defs
-  echo PASS_WARN_AGE 7 >> /etc/pam.d/common-password
+for i in $(awk -F':' '/\/home.*sh/ { print $1 }' /etc/passwd); do chage -m 7 -M 90 -W 7 $i; done
+  
+ 
 
 echo "Processing: 5.4.1.4 Ensure inactive password lock is 30 days or less"
 
