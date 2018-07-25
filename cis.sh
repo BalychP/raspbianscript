@@ -2,6 +2,12 @@
 
 [ $(id -u) != 0 ] && echo "You are not root. Please login as root or run with sudo." && exit 1
 
+if ! [ $(ping -q -c 1 -W 1 8.8.8.8 &> /dev/null) ]; 
+then
+  echo "You are not connected to internet. Please connect your device to the internet" && exit 1
+fi
+
+
 echo "Updating apt cache"
 
   apt-get update > /dev/null
@@ -282,9 +288,10 @@ echo "Processing: 5.4.5 Ensure default user shell timeout is 900 seconds or less
     then
         echo "Value is set!"
     else
-        echo "TMOUT = 600" | tee -a /etc/bash.bashrc /etc/profile
+        echo -e "TMOUT=600\nexport TMOUT" | tee -a /etc/bash.bashrc /etc/profile
   fi
 
 
 
-echo "Success! Please reboot the machine for all changes to apply"
+echo "Success! Please reboot the machine for all changes to apply" 
+  
