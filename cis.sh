@@ -41,41 +41,44 @@ echo "Processing: 1.3.2 Ensure filesystem integrity is regularly checked"
 
 echo "Processing: 2.1.1 Ensure chargen services are not enabled"
 
-  sed -i "/\b\( ^chargen\)\b/d" /etc/services
+  sed -i "/\b\(^chargen\)\b/d" /etc/services
 
 echo "Processing: 2.1.2 Ensure daytime services are not enabled"
 
-  sed -i "/\b\( ^daytime\)\b/d" /etc/services
+  sed -i "/\b\(^daytime\)\b/d" /etc/services
 
 echo "Processing: 2.1.3 Ensure discard services are not enabled"
 
-  sed -i "/\b\( ^discard\)\b/d" /etc/services
+  sed -i "/\b\(^discard\)\b/d" /etc/services
 
 echo "Processing: 2.1.4 Ensure echo services are not enabled"
 
-  sed -i "/\b\( ^echo\)\b/d" /etc/services
+  sed -i "/\b\(^echo\)\b/d" /etc/services
 
 echo "Processing: 2.1.5 Ensure time services are not enabled"
 
-  sed -i "/\b\( ^time\)\b/d" /etc/services
+  sed -i "/\b\(^time\)\b/d" /etc/services
 
 echo "Processing: 2.1.6 Ensure rsh server is not enabled"
 
-  sed -i "/\b\( ^exec\)\b/d" /etc/services
-  sed -i "/\b\( ^login\)\b/d" /etc/services
-  sed -i "/\b\( ^shell\)\b/d" /etc/services
+  sed -i "/\b\(^exec\)\b/d" /etc/services
+  sed -i "/\b\(^login\)\b/d" /etc/services
+  sed -i "/\b\(^shell\)\b/d" /etc/services
 
 echo "Processing: 2.1.7 Ensure talk server is not enabled"
 
-  sed -i "/\b\( talk\)\b/d" /etc/services
+  sed -i "/\b\(talk\)\b/d" /etc/services
+  sed -i "/\b\(ntalk\)\b/d" /etc/services
 
 echo "Processing: 2.1.8 Ensure telnet server is not enabled"
 
-  sed -i "/\b\( ^telnet\)\b/d" /etc/services
-
+  sed -i "/\b\(^telnet\)\b/d" /etc/services
+  sed -i "/\b\(^rtelnet\)\b/d" /etc/services
+  sed -i "/\b\(^telnets\)\b/d" /etc/services
+  
 echo "Processing: 2.1.9 Ensure tftp server is not enabled"
 
-  sed -i "/\b\( ^tftp\)\b/d" /etc/services
+  sed -i "/\b\(^tftp\)\b/d" /etc/services
 
 echo "Processing: 2.2.1.1 Ensure time synchronization is in use"
 
@@ -166,7 +169,7 @@ echo "Processing: 5.2.1 Ensure permissions on /etc/ssh/sshd_config is configured
 
 echo "Processing: 5.2.3 Ensure SSH LogLevel is set to INFO"
 
-  if grep -q "LogLevel INFO" /etc/ssh/sshd_config
+  if grep -q '^LogLevel INFO' /etc/ssh/sshd_config
     then
         echo "Value is set!"
     else
@@ -180,19 +183,21 @@ echo "Processing: 5.2.4 Ensure SSH X11 forwarding is disabled"
 
 echo "Processing: 5.2.5 Ensure SSH MaxAuthTries is set to 4 or less"
 
-  if grep -q "MaxAuthTries 4" /etc/ssh/sshd_config
+  if grep -q "^MaxAuthTries 4" /etc/ssh/sshd_config
     then
         echo "Value is set!"
     else
+		sed -i "/\b\(MaxAuthTries\)\b/d" /etc/ssh/sshd_config
         echo MaxAuthTries 4 >> /etc/ssh/sshd_config
   fi
 
 echo "Processing: 5.2.8 Ensure SSH root login is disabled"
 
-  if grep -q "PermitRootLogin no" /etc/ssh/sshd_config
+  if grep -q "^PermitRootLogin no" /etc/ssh/sshd_config
     then
         echo "Value is set!"
     else
+		sed -i "/\b\(PermitRootLogin\)\b/d" /etc/ssh/sshd_config
         echo PermitRootLogin no >> /etc/ssh/sshd_config
   fi
 
@@ -209,16 +214,18 @@ echo "Processing: 5.2.11 Ensure only approved MAC algorithms are used"
 
 echo "Processing: 5.2.12 Ensure SSH Idle Timeout Interval is configured"
 
-  if grep -q “ClientAliveInterval 300” /etc/ssh/sshd_config && grep -q “ClientAliveCountMax 0” /etc/ssh/sshd_config
+  if grep -q 'ClientAliveInterval 300' /etc/ssh/sshd_config && grep -q “ClientAliveCountMax 0” /etc/ssh/sshd_config
     then
         echo "Values are set!"
     else
-        echo 'ClientAliveInterval 300\nClientAliveCountMax 0' >> /etc/ssh/sshd_config
+		sed -i "/\b\(ClientAliveInterval\)\b/d" /etc/ssh/sshd_config
+		sed -i "/\b\(ClientAliveCountMax\)\b/d" /etc/ssh/sshd_config
+        echo -e 'ClientAliveInterval 300\nClientAliveCountMax 0' >> /etc/ssh/sshd_config
   fi
 
 echo "Processing: 5.2.13 Ensure SSH LoginGraceTime is set to one minute or less"
 
-  if grep -q “LoginGraceTime 60” /etc/ssh/sshd_config
+  if grep -q 'LoginGraceTime 60' /etc/ssh/sshd_config
     then
         echo "Value is set!"
     else
@@ -227,7 +234,7 @@ echo "Processing: 5.2.13 Ensure SSH LoginGraceTime is set to one minute or less"
 
 echo "Processing: 5.2.15 Ensure SSH warning banner is configured"
 
-  if grep -q “Banner /etc/issue.net” /etc/ssh/sshd_config
+  if grep -q 'Banner /etc/issue.net' /etc/ssh/sshd_config
     then
         echo "Value is set!"
     else
@@ -238,7 +245,7 @@ echo "Processing: 5.3.1 Ensure password creation requirements are configured"
 
   apt-get install -y libpam-pwquality
 
-  if grep -q “minlen = 8” /etc/security/pwquality.conf && grep -q “dcredit = -1” /etc/security/pwquality.conf && grep -q “ucredit = -1” /etc/security/pwquality.conf && grep -q “ocredit = -1” /etc/security/pwquality.conf && grep -q “lcredit = -1” /etc/security/pwquality.conf
+  if grep -q 'minlen = 8' /etc/security/pwquality.conf && grep -q 'dcredit = -1' /etc/security/pwquality.conf && grep -q 'ucredit = -1' /etc/security/pwquality.conf && grep -q 'ocredit = -1' /etc/security/pwquality.conf && grep -q 'lcredit = -1' /etc/security/pwquality.conf
     then
         echo "Values are set!"
     else
